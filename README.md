@@ -15,3 +15,15 @@ Summary
 * sp - stack pointer
 * fr - flag register
 
+
+Instructions
+------------
+
+```
+0x00        - nop
+0x01        - <reserved>
+0x02..0x07  - mov byte
+0x08
+0x09
+0x0a..0x0f  - mov word
+```
