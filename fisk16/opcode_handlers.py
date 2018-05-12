@@ -9,4 +9,5 @@ handlers = {
     0x04: i.mov_r8_ind,
     0x05: i.mov_ind_r8,
     0x06: i.mov_r16_imm16,
+    0x07: i.mov_r8_imm8,
 }

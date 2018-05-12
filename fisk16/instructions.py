@@ -44,3 +44,10 @@ def mov_r16_imm16(cpu):
     imm16 = cpu.next_word()
 
     reg_a.value = imm16
+
+
+def mov_r8_imm8(cpu):
+    reg_a = fetch_register(cpu, byte_sized=True)
+    imm8 = cpu.next_byte()
+
+    reg_a.value = imm8
