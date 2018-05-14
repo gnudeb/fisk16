@@ -123,3 +123,15 @@ def xor_r8_imm(cpu):
     imm8 = cpu.next_byte()
 
     reg_a.value ^= imm8
+
+
+def add_r16_r16(cpu):
+    reg_a, reg_b = fetch_registers(cpu)
+    reg_a.value += reg_b.value
+
+
+def add_r16_imm16(cpu):
+    reg_a = fetch_register(cpu)
+    imm16 = cpu.next_word()
+
+    reg_a.value += imm16
