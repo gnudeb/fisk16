@@ -5,22 +5,21 @@ from .opcode_handlers import handlers as _handlers
 
 class Fisk16:
     def __init__(self, instructions=None):
-        self.pc = 0
-        self.sp = 0
+        self.pc = Register16()
+        self.sp = Register16()
         self.registers = [Register16() for _ in range(16)]
         self.devices = [DummyDevice() for _ in range(16)]
 
         self.handlers = _handlers
 
     def tick(self):
-        opcode = self.read(self.pc)
-        self.pc += 1
+        opcode = self.next_byte()
         handler = self.handlers[opcode]
         handler(self)
 
     def read(self, address=None, count=1):
         if not address:
-            address = self.pc
+            address = self.pc.value
 
         value = 0
         for place in range(count):
@@ -50,12 +49,12 @@ class Fisk16:
 
     def next_byte(self):
         byte = self.read()
-        self.pc += 1
+        self.pc.value += 1
         return byte
 
     def next_word(self):
         word = self.read()
-        self.pc += 1
+        self.pc.value += 1
         word += self.read() << 8
-        self.pc += 1
+        self.pc.value += 1
         return word
