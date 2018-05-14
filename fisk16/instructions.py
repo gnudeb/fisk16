@@ -51,3 +51,75 @@ def mov_r8_imm8(cpu):
     imm8 = cpu.next_byte()
 
     reg_a.value = imm8
+
+
+def or_r16_r16(cpu):
+    reg_a, reg_b = fetch_registers(cpu)
+    reg_a.value |= reg_b.value
+
+
+def or_r8_r8(cpu):
+    reg_a, reg_b = fetch_registers(cpu, byte_sized=True)
+    reg_a.value |= reg_b.value
+
+
+def or_r16_imm(cpu):
+    reg_a = fetch_register(cpu)
+    imm16 = cpu.next_word()
+
+    reg_a.value |= imm16
+
+
+def or_r8_imm(cpu):
+    reg_a = fetch_register(cpu, byte_sized=True)
+    imm8 = cpu.next_byte()
+
+    reg_a.value |= imm8
+
+
+def and_r16_r16(cpu):
+    reg_a, reg_b = fetch_registers(cpu)
+    reg_a.value &= reg_b.value
+
+
+def and_r8_r8(cpu):
+    reg_a, reg_b = fetch_registers(cpu, byte_sized=True)
+    reg_a.value &= reg_b.value
+
+
+def and_r16_imm(cpu):
+    reg_a = fetch_register(cpu)
+    imm16 = cpu.next_word()
+
+    reg_a.value &= imm16
+
+
+def and_r8_imm(cpu):
+    reg_a = fetch_register(cpu, byte_sized=True)
+    imm8 = cpu.next_byte()
+
+    reg_a.value |= imm8
+
+
+def xor_r16_r16(cpu):
+    reg_a, reg_b = fetch_registers(cpu)
+    reg_a.value ^= reg_b.value
+
+
+def xor_r8_r8(cpu):
+    reg_a, reg_b = fetch_registers(cpu, byte_sized=True)
+    reg_a.value ^= reg_b.value
+
+
+def xor_r16_imm(cpu):
+    reg_a = fetch_register(cpu)
+    imm16 = cpu.next_word()
+
+    reg_a.value ^= imm16
+
+
+def xor_r8_imm(cpu):
+    reg_a = fetch_register(cpu, byte_sized=True)
+    imm8 = cpu.next_byte()
+
+    reg_a.value ^= imm8
