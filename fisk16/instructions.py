@@ -11,12 +11,12 @@ def r16_r16(cpu):
 
 def r16_ind(cpu):
     reg_a, reg_b = cpu.next_registers()
-    return reg_a, cpu.pointer(reg_b.value, size=2)
+    return reg_a, cpu.pointer(reg_b.value, byte_sized=False)
 
 
 def ind_r16(cpu):
     reg_a, reg_b = cpu.next_registers()
-    return cpu.pointer(reg_a.value, size=2), reg_b
+    return cpu.pointer(reg_a.value, byte_sized=False), reg_b
 
 
 def r8_r8(cpu):

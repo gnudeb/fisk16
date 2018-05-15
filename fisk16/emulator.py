@@ -18,24 +18,27 @@ class Fisk16:
         instruction = self.handlers[opcode]
         instruction.execute(self)
 
-    def read(self, address=None, count=1):
+    def read(self, address=None, byte_sized=True):
         if not address:
             address = self.pc.value
 
-        value = 0
-        for place in range(count):
-            byte = self.device_at(address).read(address)
-            value += byte << (8*place)
+        value = self.device_at(address).read(address)
+        if not byte_sized:
             address += 1
+            second_byte = self.device_at(address).read(address)
+            value += second_byte << 8
+
         return value
 
-    def write(self, address, number, count=1):
-        for place in range(count):
-            adjusted_address = address & 0x0fff
-            byte = number & 0xff
-            self.device_at(address).write(adjusted_address, byte)
-            number >>= 8
+    def write(self, address, number, byte_sized=True):
+        if byte_sized:
+            self.device_at(address).write(address, number)
+        else:
+            low_byte = number & 0x0f
+            high_byte = (number & 0xf0) >> 8
+            self.device_at(address).write(address, low_byte)
             address += 1
+            self.device_at(address).write(address, high_byte)
 
     def device_at(self, address):
         return self.devices[address >> 12]
@@ -54,14 +57,12 @@ class Fisk16:
         return byte
 
     def next_word(self):
-        word = self.read()
-        self.pc.value += 1
-        word += self.read() << 8
-        self.pc.value += 1
+        word = self.read(byte_sized=False)
+        self.pc.value += 2
         return word
 
-    def pointer(self, address, size=1):
-        return Pointer(self, address, size)
+    def pointer(self, address, byte_sized=True):
+        return Pointer(self, address, byte_sized)
 
     def next_registers(self, byte_sized=False):
         registers_byte = self.next_byte()

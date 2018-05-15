@@ -1,17 +1,17 @@
 
 class Pointer:
-    def __init__(self, cpu, address, size=1):
+    def __init__(self, cpu, address, byte_sized):
         self.cpu = cpu
         self.address = address
-        self.size = size
+        self.byte_sized = byte_sized
 
     @property
     def value(self):
-        return self.cpu.read(self.address, self.size)
+        return self.cpu.read(self.address, self.byte_sized)
 
     @value.setter
     def value(self, number):
-        self.cpu.write(self.address, number, self.size)
+        self.cpu.write(self.address, number, self.byte_sized)
 
 
 def nibbles(byte):
