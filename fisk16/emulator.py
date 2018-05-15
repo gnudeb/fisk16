@@ -1,7 +1,6 @@
 from .devices import DummyDevice
-from .registers import Register16
 from .opcode_handlers import handlers as _handlers
-from .types import uint8, uint16, Pointer
+from .types import uint8, uint16, Pointer, Register16
 
 
 class Fisk16:
