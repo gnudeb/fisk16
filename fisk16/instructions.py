@@ -7,6 +7,45 @@ def _or(cpu, op1, op2):
     op1.value |= op2.value
 
 
+def _and(cpu, op1, op2):
+    op1.value |= op2.value
+
+
+def xor(cpu, op1, op2):
+    op1.value ^= op2.value
+
+
+def add(cpu, op1, op2):
+    # TODO: Set carry flag when needed
+    op1.value += op2.value
+
+
+def addc(cpu, op1, op2):
+    # TODO: Set carry flag when needed
+    # TODO: Implement carry flag
+    op1.value += op2.value
+
+
+def sub(cpu, op1, op2):
+    # TODO: Set carry flag when needed
+    op1.value -= op2.value
+
+
+def subc(cpu, op1, op2):
+    # TODO: Set carry flag when needed
+    # TODO: Implement carry flag
+    op1.value -= op2.value
+
+
+def xch(cpu, op1, op2):
+    op1.value, op2.value = op2.value, op1.value
+
+
+def cmp(cpu, op1, op2):
+    # TODO: Set appropriate flags depending on the values of the operands
+    pass
+
+
 def r16_r16(cpu):
     return cpu.next_registers()
 

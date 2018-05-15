@@ -1,6 +1,6 @@
 from .instructions import (
     r16_r16, r16_ind, ind_r16, r8_r8, r8_ind, ind_r8, r16_imm16, r8_imm8,
-    mov, _or,
+    mov, _or, _and, xor, add, addc, sub, subc,
 )
 
 
@@ -28,10 +28,20 @@ handlers = {
     0x09: I(_or, r8_r8),
     0x0a: I(_or, r16_imm16),
     0x0b: I(_or, r8_imm8),
-    # 0x0c: i.and_r16_r16,
-    # 0x0d: i.and_r8_r8,
-    # 0x0e: i.and_r16_imm16,
-    # 0x0f: i.and_r8_imm8,
-    # 0x10: i.add_r16_r16,
-    # 0x11: i.add_r16_imm16,
+    0x0c: I(_and, r16_r16),
+    0x0d: I(_and, r8_r8),
+    0x0e: I(_and, r16_imm16),
+    0x0f: I(_and, r8_imm8),
+    0x10: I(xor, r16_r16),
+    0x11: I(xor, r8_r8),
+    0x12: I(xor, r16_imm16),
+    0x13: I(xor, r8_imm8),
+    0x14: I(add, r16_r16),
+    0x15: I(add, r8_r8),
+    0x16: I(addc, r16_r16),
+    0x17: I(addc, r8_r8),
+    0x18: I(sub, r16_r16),
+    0x19: I(sub, r8_r8),
+    0x1a: I(subc, r16_r16),
+    0x1b: I(subc, r8_r8),
 }
