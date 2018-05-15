@@ -15,8 +15,8 @@ class Fisk16:
 
     def tick(self):
         opcode = self.next_byte().value
-        instruction = self.handlers[opcode]
-        instruction.execute(self)
+        opcode_handler = self.handlers[opcode]
+        opcode_handler.execute(self)
 
     def read(self, address=None, byte_sized=True):
         if not address:

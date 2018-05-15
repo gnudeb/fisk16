@@ -4,20 +4,20 @@ from .instructions import (
 )
 
 
-class Instruction:
+class OpcodeHandler:
     def __init__(self, instruction, operand_provider=None):
         self.instruction = instruction
         self.operand_provider = operand_provider or (lambda cpu: tuple())
 
     def execute(self, cpu):
         operands = self.operand_provider(cpu)
-        if type(operands) is list:
+        if type(operands) is tuple:
             self.instruction(cpu, *operands)
         else:
             self.instruction(cpu, operands)
 
 
-I = Instruction
+I = OpcodeHandler
 handlers = {
     0x00: I(mov, r16_r16),
     0x01: I(mov, r16_ind),
