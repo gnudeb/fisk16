@@ -86,3 +86,19 @@ def r8_imm8(cpu):
     imm8 = cpu.next_byte()
 
     return reg_a, imm8
+
+
+def r16(cpu):
+    return cpu.next_register()
+
+
+def r8(cpu):
+    return cpu.next_register(byte_sized=True)
+
+
+def imm16(cpu):
+    return cpu.next_word()
+
+
+def imm8(cpu):
+    return cpu.next_byte()

@@ -1,6 +1,6 @@
 from .instructions import (
-    r16_r16, r16_ind, ind_r16, r8_r8, r8_ind, ind_r8, r16_imm16, r8_imm8,
-    mov, _or, _and, xor, add, addc, sub, subc,
+    r16_r16, r16_ind, ind_r16, r8_r8, r8_ind, ind_r8, r16_imm16, r8_imm8, r16, r8, imm16, imm8,
+    mov, _or, _and, xor, add, addc, sub, subc, xch, cmp,
 )
 
 
@@ -11,7 +11,10 @@ class Instruction:
 
     def execute(self, cpu):
         operands = self.operand_provider(cpu)
-        self.instruction(cpu, *operands)
+        if type(operands) is list:
+            self.instruction(cpu, *operands)
+        else:
+            self.instruction(cpu, operands)
 
 
 I = Instruction
@@ -44,4 +47,10 @@ handlers = {
     0x19: I(sub, r8_r8),
     0x1a: I(subc, r16_r16),
     0x1b: I(subc, r8_r8),
+    0x1c: I(xch, r16_r16),
+    0x1d: I(xch, r8_r8),
+    0x1e: I(cmp, r16_r16),
+    0x1f: I(cmp, r8_r8),
+    0x20: I(cmp, r16_imm16),
+    0x21: I(cmp, r8_imm8),
 }
