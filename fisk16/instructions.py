@@ -3,6 +3,10 @@ def mov(cpu, op1, op2):
     op1.value = op2.value
 
 
+def _or(cpu, op1, op2):
+    op1.value |= op2.value
+
+
 def r16_r16(cpu):
     return cpu.next_registers()
 

@@ -1,6 +1,6 @@
 from .instructions import (
     r16_r16, r16_ind, ind_r16, r8_r8, r8_ind, ind_r8, r16_imm16, r8_imm8,
-    mov,
+    mov, _or,
 )
 
 
@@ -24,10 +24,10 @@ handlers = {
     0x05: I(mov, ind_r8),
     0x06: I(mov, r16_imm16),
     0x07: I(mov, r8_imm8),
-    # 0x08: i.or_r16_r16,
-    # 0x09: i.or_r8_r8,
-    # 0x0a: i.or_r16_imm16,
-    # 0x0b: i.or_r8_imm8,
+    0x08: I(_or, r16_r16),
+    0x09: I(_or, r8_r8),
+    0x0a: I(_or, r16_imm16),
+    0x0b: I(_or, r8_imm8),
     # 0x0c: i.and_r16_r16,
     # 0x0d: i.and_r8_r8,
     # 0x0e: i.and_r16_imm16,
