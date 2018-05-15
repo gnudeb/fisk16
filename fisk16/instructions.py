@@ -1,137 +1,48 @@
-from .helpers import fetch_register, fetch_registers
+from ctypes import c_uint16 as uint16, c_uint8 as uint8
 
 
-def mov_r16_r16(cpu):
-    reg_a, reg_b = fetch_registers(cpu)
-    reg_a.value = reg_b.value
+def mov(cpu, op1, op2):
+    op1.value = op2.value
 
 
-def mov_r16_ind(cpu):
-    reg_a, reg_b = fetch_registers(cpu)
-
-    address = reg_b.value
-    reg_a.value = cpu.read(address, count=2)
+def r16_r16(cpu):
+    return cpu.next_registers()
 
 
-def mov_ind_r16(cpu):
-    reg_a, reg_b = fetch_registers(cpu)
-
-    address = reg_a.value
-    cpu.write(address, reg_b.value, count=2)
+def r16_ind(cpu):
+    reg_a, reg_b = cpu.next_registers()
+    return reg_a, cpu.pointer(reg_b.value, size=2)
 
 
-def mov_r8_r8(cpu):
-    reg_a, reg_b = fetch_registers(cpu, byte_sized=True)
-    reg_a.value = reg_b.value
+def ind_r16(cpu):
+    reg_a, reg_b = cpu.next_registers()
+    return cpu.pointer(reg_a.value, size=2), reg_b
 
 
-def mov_r8_ind(cpu):
-    reg_a, reg_b = fetch_registers(cpu, byte_sized=[True, False])
-
-    address = reg_b.value
-    reg_a.value = cpu.read(address)
+def r8_r8(cpu):
+    return cpu.next_registers(byte_sized=True)
 
 
-def mov_ind_r8(cpu):
-    reg_a, reg_b = fetch_registers(cpu, byte_sized=[False, True])
-
-    address = reg_a.value
-    cpu.write(address, reg_b.value)
+def r8_ind(cpu):
+    reg_a, reg_b = cpu.next_registers(byte_sized=[True, False])
+    return reg_a, cpu.pointer(reg_b.value)
 
 
-def mov_r16_imm16(cpu):
-    reg_a = fetch_register(cpu)
-    imm16 = cpu.next_word()
-
-    reg_a.value = imm16
+def ind_r8(cpu):
+    reg_a, reg_b = cpu.next_registers(byte_sized=[True, False])
+    return cpu.pointer(reg_a.value), reg_b
 
 
-def mov_r8_imm8(cpu):
-    reg_a = fetch_register(cpu, byte_sized=True)
-    imm8 = cpu.next_byte()
+def r16_imm16(cpu):
+    reg_a = cpu.next_register()
+    imm16 = uint16(cpu.next_word())
 
-    reg_a.value = imm8
-
-
-def or_r16_r16(cpu):
-    reg_a, reg_b = fetch_registers(cpu)
-    reg_a.value |= reg_b.value
+    return reg_a, imm16
 
 
-def or_r8_r8(cpu):
-    reg_a, reg_b = fetch_registers(cpu, byte_sized=True)
-    reg_a.value |= reg_b.value
+def r8_imm8(cpu):
+    reg_a = cpu.next_register(byte_sized=True)
+    imm8 = uint8(cpu.next_byte())
 
+    return reg_a, imm8
 
-def or_r16_imm16(cpu):
-    reg_a = fetch_register(cpu)
-    imm16 = cpu.next_word()
-
-    reg_a.value |= imm16
-
-
-def or_r8_imm8(cpu):
-    reg_a = fetch_register(cpu, byte_sized=True)
-    imm8 = cpu.next_byte()
-
-    reg_a.value |= imm8
-
-
-def and_r16_r16(cpu):
-    reg_a, reg_b = fetch_registers(cpu)
-    reg_a.value &= reg_b.value
-
-
-def and_r8_r8(cpu):
-    reg_a, reg_b = fetch_registers(cpu, byte_sized=True)
-    reg_a.value &= reg_b.value
-
-
-def and_r16_imm16(cpu):
-    reg_a = fetch_register(cpu)
-    imm16 = cpu.next_word()
-
-    reg_a.value &= imm16
-
-
-def and_r8_imm8(cpu):
-    reg_a = fetch_register(cpu, byte_sized=True)
-    imm8 = cpu.next_byte()
-
-    reg_a.value |= imm8
-
-
-def xor_r16_r16(cpu):
-    reg_a, reg_b = fetch_registers(cpu)
-    reg_a.value ^= reg_b.value
-
-
-def xor_r8_r8(cpu):
-    reg_a, reg_b = fetch_registers(cpu, byte_sized=True)
-    reg_a.value ^= reg_b.value
-
-
-def xor_r16_imm16(cpu):
-    reg_a = fetch_register(cpu)
-    imm16 = cpu.next_word()
-
-    reg_a.value ^= imm16
-
-
-def xor_r8_imm8(cpu):
-    reg_a = fetch_register(cpu, byte_sized=True)
-    imm8 = cpu.next_byte()
-
-    reg_a.value ^= imm8
-
-
-def add_r16_r16(cpu):
-    reg_a, reg_b = fetch_registers(cpu)
-    reg_a.value += reg_b.value
-
-
-def add_r16_imm16(cpu):
-    reg_a = fetch_register(cpu)
-    imm16 = cpu.next_word()
-
-    reg_a.value += imm16
