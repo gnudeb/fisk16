@@ -2,6 +2,7 @@ from .devices import DummyDevice
 from .registers import Register16
 from .opcode_handlers import handlers as _handlers
 from .helpers import Pointer, nibbles
+from .types import uint8, uint16
 
 
 class Fisk16:
@@ -14,7 +15,7 @@ class Fisk16:
         self.handlers = _handlers
 
     def tick(self):
-        opcode = self.next_byte()
+        opcode = self.next_byte().value
         instruction = self.handlers[opcode]
         instruction.execute(self)
 
@@ -51,22 +52,22 @@ class Fisk16:
             # registers[abc][d]
             return self.registers[_id >> 1][_id & 1]
 
-    def next_byte(self):
+    def next_byte(self) -> uint8:
         byte = self.read()
         self.pc.value += 1
-        return byte
+        return uint8(byte)
 
-    def next_word(self):
+    def next_word(self) -> uint16:
         word = self.read(byte_sized=False)
         self.pc.value += 2
-        return word
+        return uint16(word)
 
     def pointer(self, address, byte_sized=True):
         return Pointer(self, address, byte_sized)
 
     def next_registers(self, byte_sized=False):
         registers_byte = self.next_byte()
-        reg_b_id, reg_a_id = nibbles(registers_byte)
+        reg_b_id, reg_a_id = registers_byte.nibbles()
 
         if type(byte_sized) is list:
             byte_sized_a, byte_sized_b = byte_sized
@@ -80,7 +81,7 @@ class Fisk16:
 
     def next_register(self, byte_sized=False):
         registers_byte = self.next_byte()
-        _, reg_a_id = nibbles(registers_byte)
+        _, reg_a_id = registers_byte.nibbles()
 
         reg_a = self.register(reg_a_id, byte_sized=byte_sized)
 

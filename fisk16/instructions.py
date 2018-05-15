@@ -1,5 +1,3 @@
-from ctypes import c_uint16 as uint16, c_uint8 as uint8
-
 
 def mov(cpu, op1, op2):
     op1.value = op2.value
@@ -35,14 +33,13 @@ def ind_r8(cpu):
 
 def r16_imm16(cpu):
     reg_a = cpu.next_register()
-    imm16 = uint16(cpu.next_word())
+    imm16 = cpu.next_word()
 
     return reg_a, imm16
 
 
 def r8_imm8(cpu):
     reg_a = cpu.next_register(byte_sized=True)
-    imm8 = uint8(cpu.next_byte())
+    imm8 = cpu.next_byte()
 
     return reg_a, imm8
-
