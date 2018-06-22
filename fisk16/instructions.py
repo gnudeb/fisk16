@@ -27,6 +27,7 @@ def r16_r16(cpu):
     source_id, target_id = as_nibbles(cpu.ram[cpu.ip])
     target_ptr = Pointer(cpu.register_ram, target_id*2, 2)
     source_ptr = Pointer(cpu.register_ram, source_id*2, 2)
+    cpu.ip += 1
     return target_ptr, source_ptr
 
 
@@ -35,6 +36,7 @@ def r16_ind(cpu):
     target_ptr = Pointer(cpu.register_ram, target_id * 2, 2)
     pointer = cpu.register_ram.read(source_id*2, 2)
     source_ptr = Pointer(cpu.ram, pointer, 2)
+    cpu.ip += 1
     return target_ptr, source_ptr
 
 
@@ -43,6 +45,7 @@ def ind_r16(cpu):
     source_ptr = Pointer(cpu.register_ram, source_id * 2, 2)
     pointer = cpu.register_ram.read(target_id*2, 2)
     target_ptr = Pointer(cpu.ram, pointer, 2)
+    cpu.ip += 1
     return target_ptr, source_ptr
 
 
@@ -50,6 +53,7 @@ def r8_r8(cpu):
     source_id, target_id = as_nibbles(cpu.ram[cpu.ip])
     target_ptr = Pointer(cpu.register_ram, target_id, 1)
     source_ptr = Pointer(cpu.register_ram, source_id, 1)
+    cpu.ip += 1
     return target_ptr, source_ptr
 
 
@@ -58,6 +62,7 @@ def r8_ind(cpu):
     target_ptr = Pointer(cpu.register_ram, target_id, 1)
     pointer = cpu.register_ram.read(source_id*2, 2)
     source_ptr = Pointer(cpu.ram, pointer, 1)
+    cpu.ip += 1
     return target_ptr, source_ptr
 
 
@@ -66,6 +71,7 @@ def ind_r8(cpu):
     source_ptr = Pointer(cpu.register_ram, source_id, 1)
     pointer = cpu.register_ram.read(target_id*2, 2)
     target_ptr = Pointer(cpu.ram, pointer, 1)
+    cpu.ip += 1
     return target_ptr, source_ptr
 
 
@@ -79,6 +85,7 @@ def r16_imm16(cpu):
     immediate += cpu.ram[cpu.ip]
     source_ptr = ImmediatePointer(immediate)
 
+    cpu.ip += 1
     return target_ptr, source_ptr
 
 
@@ -90,6 +97,7 @@ def r8_imm8(cpu):
     immediate = cpu.ram[cpu.ip]
     source_ptr = ImmediatePointer(immediate)
 
+    cpu.ip += 1
     return target_ptr, source_ptr
 
 
