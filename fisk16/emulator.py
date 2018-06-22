@@ -1,5 +1,4 @@
-from .instructions import r16_r16, mov, r8_r8, r16_imm16
-
+from .instruction_set import instruction_set
 
 class RAM(bytearray):
 
@@ -45,10 +44,7 @@ class Fisk16:
     def tick(self):
         opcode = self.ram[self.ip]
         self.ip += 1
-        if opcode == 0x00:
-            mov(self, *r16_r16(self))
-        elif opcode == 0x03:
-            mov(self, *r8_r8(self))
-        elif opcode == 0x07:
-            mov(self, *r16_imm16(self))
+        instruction, addressing_mode = instruction_set[opcode]
+
+        instruction(self, *addressing_mode(self))
 
