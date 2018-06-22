@@ -82,5 +82,16 @@ def r16_imm16(cpu):
     return target_ptr, source_ptr
 
 
+def r8_imm8(cpu):
+    _, target_id = as_nibbles(cpu.ram[cpu.ip])
+    target_ptr = Pointer(cpu.register_ram, target_id, 1)
+
+    cpu.ip += 1
+    immediate = cpu.ram[cpu.ip]
+    source_ptr = ImmediatePointer(immediate)
+
+    return target_ptr, source_ptr
+
+
 def mov(cpu, target: Pointer, source: Pointer):
     target.write(source.read())
