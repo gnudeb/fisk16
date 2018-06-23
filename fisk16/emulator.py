@@ -21,6 +21,22 @@ class RAM(bytearray):
             self[address + offset] = value & 255
             value >>= 8
 
+    def read_bit(self, bit_offset):
+        byte_offset = bit_offset >> 3
+        local_bit_offset = bit_offset & 0b111
+        byte = self[byte_offset]
+        return bool(byte & (1 << local_bit_offset))
+
+    def write_bit(self, bit_offset, bit):
+        byte_offset = bit_offset >> 3
+        local_bit_offset = bit_offset & 0b111
+        byte = self[byte_offset]
+        if bit == 0:
+            byte &= (255 ^ (1 << local_bit_offset))
+        else:
+            byte |= (1 << local_bit_offset)
+        self[byte_offset] = byte
+
 
 class RegisterRAM(RAM):
 
