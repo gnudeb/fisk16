@@ -1,6 +1,6 @@
 from .instructions import\
     (r16_r16, r16_ind, ind_r16, r8_r8, r8_ind, ind_r8, r16_imm16, r8_imm8,
-     mov, _or, _and, xor, add, addc,)
+     mov, _or, _and, xor, add, addc, sub, subc, xch,)
 
 instruction_set = {
     0x00: (mov, r16_r16),
@@ -31,4 +31,14 @@ instruction_set = {
     0x19: (addc, r8_r8),
     0x1a: (addc, r16_imm16),
     0x1b: (addc, r8_imm8),
+    0x1c: (sub, r16_r16),
+    0x1d: (sub, r8_r8),
+    0x1e: (sub, r16_imm16),
+    0x1f: (sub, r8_imm8),
+    0x20: (subc, r16_r16),
+    0x21: (subc, r8_r8),
+    0x22: (subc, r16_imm16),
+    0x23: (subc, r8_imm8),
+    0x24: (xch, r16_r16),
+    0x25: (xch, r8_r8),
 }

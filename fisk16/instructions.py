@@ -123,3 +123,17 @@ def add(cpu, target: Pointer, source: Pointer):
 
 def addc(cpu, target: Pointer, source: Pointer):
     target.write(target.read() + source.read() + cpu.register_ram.read_bit('c'))
+
+
+def sub(cpu, target: Pointer, source: Pointer):
+    target.write(target.read() - source.read())
+
+
+def subc(cpu, target: Pointer, source: Pointer):
+    target.write(target.read() - source.read() - cpu.register_ram.read_bit('c'))
+
+
+def xch(cpu, target: Pointer, source: Pointer):
+    temp = source.read()
+    source.write(target.read())
+    target.write(temp)
