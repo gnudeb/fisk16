@@ -39,44 +39,51 @@ class RAM(bytearray):
 
 
 class RegisterRAM(RAM):
+    pointers = {
+        'r0': (0 * 2, 2),
+        'r1': (1 * 2, 2),
+        'r2': (2 * 2, 2),
+        'r3': (3 * 2, 2),
+        'r4': (4 * 2, 2),
+        'r5': (5 * 2, 2),
+        'r6': (6 * 2, 2),
+        'r7': (7 * 2, 2),
+        'r8': (8 * 2, 2),
+        'r9': (9 * 2, 2),
+        'r10': (10 * 2, 2),
+        'r11': (11 * 2, 2),
+        'r12': (12 * 2, 2),
+        'r13': (13 * 2, 2),
+        'fl': (14 * 2, 2),
+        'ip': (15 * 2, 2),
+        'r0l': (0, 1),
+        'r0h': (1, 1),
+        'r1l': (2, 1),
+        'r1h': (3, 1),
+        'r2l': (4, 1),
+        'r2h': (5, 1),
+        'r3l': (6, 1),
+        'r3h': (7, 1),
+        'r4l': (8, 1),
+        'r4h': (9, 1),
+        'r5l': (10, 1),
+        'r5h': (11, 1),
+        'r6l': (12, 1),
+        'r6h': (13, 1),
+        'r7l': (14, 1),
+        'r7h': (15, 1),
+    }
+
+    bit_pointers = {
+        'c': ((14*2 + 1) * 8 + 0),  # bit 0 of 'fl' register -- Carry
+        'z': ((14*2 + 1) * 8 + 1),  # bit 1 of 'fl' register -- Zero
+        's': ((14*2 + 1) * 8 + 2),  # bit 2 of 'fl' register -- Sign
+        'v': ((14*2 + 1) * 8 + 3),  # bit 3 of 'fl' register -- Overflow
+    }
 
     def __init__(self):
         # Fisk16 has 32 word-sized registers = 64 bytes
         super().__init__(32 * 2)
-        self.pointers = {
-            'r0':  (0 * 2, 2),
-            'r1':  (1 * 2, 2),
-            'r2':  (2 * 2, 2),
-            'r3':  (3 * 2, 2),
-            'r4':  (4 * 2, 2),
-            'r5':  (5 * 2, 2),
-            'r6':  (6 * 2, 2),
-            'r7':  (7 * 2, 2),
-            'r8':  (8 * 2, 2),
-            'r9':  (9 * 2, 2),
-            'r10': (10 * 2, 2),
-            'r11': (11 * 2, 2),
-            'r12': (12 * 2, 2),
-            'r13': (13 * 2, 2),
-            'r14': (14 * 2, 2),
-            'ip':  (15 * 2, 2),
-            'r0l': (0, 1),
-            'r0h': (1, 1),
-            'r1l': (2, 1),
-            'r1h': (3, 1),
-            'r2l': (4, 1),
-            'r2h': (5, 1),
-            'r3l': (6, 1),
-            'r3h': (7, 1),
-            'r4l': (8, 1),
-            'r4h': (9, 1),
-            'r5l': (10, 1),
-            'r5h': (11, 1),
-            'r6l': (12, 1),
-            'r6h': (13, 1),
-            'r7l': (14, 1),
-            'r7h': (15, 1),
-        }
 
     def read(self, address, size=1):
         if type(address) is str:
@@ -87,6 +94,16 @@ class RegisterRAM(RAM):
         if type(address) is str:
             address, size = self.pointers[address]
         super().write(address, value, size)
+
+    def read_bit(self, bit_offset):
+        if type(bit_offset) is str:
+            bit_offset = self.bit_pointers[bit_offset]
+        return super().read_bit(bit_offset)
+
+    def write_bit(self, bit_offset, bit):
+        if type(bit_offset) is str:
+            bit_offset = self.bit_pointers[bit_offset]
+        super().write_bit(bit_offset, bit)
 
 
 class Fisk16:
