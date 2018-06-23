@@ -122,5 +122,4 @@ def add(cpu, target: Pointer, source: Pointer):
 
 
 def addc(cpu, target: Pointer, source: Pointer):
-    # TODO: Implement carry bit
-    target.write(target.read() + source.read())
+    target.write(target.read() + source.read() + cpu.register_ram.read_bit('c'))
