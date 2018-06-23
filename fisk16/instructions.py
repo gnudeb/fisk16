@@ -103,3 +103,24 @@ def r8_imm8(cpu):
 
 def mov(cpu, target: Pointer, source: Pointer):
     target.write(source.read())
+
+
+def _or(cpu, target: Pointer, source: Pointer):
+    target.write(target.read() | source.read())
+
+
+def _and(cpu, target: Pointer, source: Pointer):
+    target.write(target.read() & source.read())
+
+
+def xor(cpu, target: Pointer, source: Pointer):
+    target.write(target.read() ^ source.read())
+
+
+def add(cpu, target: Pointer, source: Pointer):
+    target.write(target.read() + source.read())
+
+
+def addc(cpu, target: Pointer, source: Pointer):
+    # TODO: Implement carry bit
+    target.write(target.read() + source.read())
