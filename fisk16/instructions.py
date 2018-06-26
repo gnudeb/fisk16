@@ -101,6 +101,14 @@ def r8_imm8(cpu):
     return target_ptr, source_ptr
 
 
+def imm16(cpu):
+    immediate = cpu.ram[cpu.ip] * 256
+    cpu.ip += 1
+    immediate += cpu.ram[cpu.ip]
+    cpu.ip += 1
+    return ImmediatePointer(immediate),
+
+
 def mov(cpu, target: Pointer, source: Pointer):
     target.write(source.read())
 
@@ -165,3 +173,7 @@ def xch(cpu, target: Pointer, source: Pointer):
     temp = source.read()
     source.write(target.read())
     target.write(temp)
+
+
+def jmp(cpu, target: Pointer):
+    cpu.ip = target.read()
