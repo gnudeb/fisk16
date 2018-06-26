@@ -37,6 +37,10 @@ class RAM(bytearray):
             byte |= (1 << local_bit_offset)
         self[byte_offset] = byte
 
+    def write_bytes(self, address, it):
+        for offset, byte in enumerate(it):
+            self[address + offset] = byte
+
 
 class RegisterRAM(RAM):
     pointers = {
