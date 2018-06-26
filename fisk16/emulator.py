@@ -77,8 +77,6 @@ class RegisterRAM(RAM):
     bit_pointers = {
         'c': ((14*2 + 1) * 8 + 0),  # bit 0 of 'fl' register -- Carry
         'z': ((14*2 + 1) * 8 + 1),  # bit 1 of 'fl' register -- Zero
-        's': ((14*2 + 1) * 8 + 2),  # bit 2 of 'fl' register -- Sign
-        'v': ((14*2 + 1) * 8 + 3),  # bit 3 of 'fl' register -- Overflow
     }
 
     def __init__(self):

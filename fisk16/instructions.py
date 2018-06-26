@@ -101,93 +101,64 @@ def r8_imm8(cpu):
     return target_ptr, source_ptr
 
 
-def update_flags(cpu, a, b, unmodded_result, result, operand_size):
-    sign_bit_offset = operand_size * 8 - 1
-
-    cpu.register_ram.write_bit('s', result & (1 << sign_bit_offset))
-    cpu.register_ram.write_bit('z', result == 0)
-    cpu.register_ram.write_bit('c', not (0 <= unmodded_result <= 0xffff))
-
-    if (a & (1 << sign_bit_offset)) == (b & (1 << sign_bit_offset)):
-        overflow = (a & (1 << sign_bit_offset)) != (result & (1 << sign_bit_offset))
-    else:
-        overflow = 0
-    cpu.register_ram.write_bit('v', overflow)
-
-
 def mov(cpu, target: Pointer, source: Pointer):
     target.write(source.read())
 
 
 def _or(cpu, target: Pointer, source: Pointer):
-    # AAAAAA UGLYYYYY
-    a = target.read()
-    b = source.read()
-    unmodded_result = a | b
-    target.write(unmodded_result)
+    target.write(target.read() | source.read())
     result = target.read()
 
-    update_flags(cpu, a, b, unmodded_result, result, target.size)
+    cpu.register_ram.write_bit('c', 0)
+    cpu.register_ram.write_bit('z', not result)
 
 
 def _and(cpu, target: Pointer, source: Pointer):
-    a = target.read()
-    b = source.read()
-    unmodded_result = a & b
-    target.write(unmodded_result)
+    target.write(target.read() & source.read())
     result = target.read()
 
-    update_flags(cpu, a, b, unmodded_result, result, target.size)
+    cpu.register_ram.write_bit('c', 0)
+    cpu.register_ram.write_bit('z', not result)
 
 
 def xor(cpu, target: Pointer, source: Pointer):
-    a = target.read()
-    b = source.read()
-    unmodded_result = a ^ b
-    target.write(unmodded_result)
+    target.write(target.read() ^ source.read())
     result = target.read()
 
-    update_flags(cpu, a, b, unmodded_result, result, target.size)
+    cpu.register_ram.write_bit('c', 0)
+    cpu.register_ram.write_bit('z', not result)
 
 
 def add(cpu, target: Pointer, source: Pointer):
-    a = target.read()
-    b = source.read()
-    unmodded_result = a + b
-    target.write(unmodded_result)
-    result = target.read()
+    result = target.read() + source.read()
+    target.write(result)
 
-    update_flags(cpu, a, b, unmodded_result, result, target.size)
+    cpu.register_ram.write_bit('c', result >= 1 << (target.size * 8))
+    cpu.register_ram.write_bit('z', not result)
 
 
 def addc(cpu, target: Pointer, source: Pointer):
-    a = target.read()
-    b = source.read()
-    unmodded_result = a + b + cpu.register_ram.read_bit('c')
-    target.write(unmodded_result)
-    result = target.read()
+    result = target.read() + source.read() + cpu.register_ram.read_bit('c')
+    target.write(result)
 
-    update_flags(cpu, a, b, unmodded_result, result, target.size)
+    cpu.register_ram.write_bit('c', result >= 1 << (target.size * 8))
+    cpu.register_ram.write_bit('z', not result)
 
 
 def sub(cpu, target: Pointer, source: Pointer):
-    a = target.read()
-    b = source.read()
-    unmodded_result = a - b
-    target.write(unmodded_result)
-    result = target.read()
+    result = target.read() - source.read()
+    target.write(result)
 
-    update_flags(cpu, a, b, unmodded_result, result, target.size)
+    cpu.register_ram.write_bit('c', result < 0)
+    cpu.register_ram.write_bit('z', not result)
 
 
 def subc(cpu, target: Pointer, source: Pointer):
-    a = target.read()
-    b = source.read()
-    unmodded_result = a - b - cpu.register_ram.read_bit('c')
-    target.write(unmodded_result)
-    result = target.read()
+    result = target.read() - source.read() - cpu.register_ram.read_bit('c')
+    target.write(result)
 
-    update_flags(cpu, a, b, unmodded_result, result, target.size)
+    cpu.register_ram.write_bit('c', result < 0)
+    cpu.register_ram.write_bit('z', not result)
 
 
 def xch(cpu, target: Pointer, source: Pointer):
