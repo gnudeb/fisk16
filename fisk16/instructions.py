@@ -196,3 +196,20 @@ def jz(cpu, target: Pointer):
         byte_offset = -(-byte_offset % 256)
 
     cpu.ip += byte_offset
+
+
+def cmp(cpu, target: Pointer, source: Pointer):
+    # Basically a `sub` instruction without actual subtraction
+    result = target.read() - source.read()
+
+    cpu.register_ram.write_bit('c', result < 0)
+    cpu.register_ram.write_bit('z', not result)
+
+
+def test(cpu, target: Pointer):
+    result = target.read()
+    operand_size = target.size * 8
+
+    # Carry bit is set if operand is negative
+    cpu.register_ram.write_bit('c', result >> (operand_size - 1))
+    cpu.register_ram.write_bit('z', not result)
