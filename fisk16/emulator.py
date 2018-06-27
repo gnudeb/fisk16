@@ -130,12 +130,6 @@ class Fisk16:
     def sp(self, value):
         self.register_ram.write('sp', value)
 
-    @staticmethod
-    def _as_nibbles(byte):
-        high = byte >> 4
-        low = byte & 0x0f
-        return high, low
-
     def tick(self):
         opcode = self.ram[self.ip]
         self.ip += 1
