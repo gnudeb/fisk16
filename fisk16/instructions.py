@@ -109,6 +109,12 @@ def imm16(cpu):
     return ImmediatePointer(immediate),
 
 
+def imm8(cpu):
+    immediate = cpu.ram[cpu.ip]
+    cpu.ip += 1
+    return ImmediatePointer(immediate),
+
+
 def mov(cpu, target: Pointer, source: Pointer):
     target.write(source.read())
 
@@ -177,3 +183,16 @@ def xch(cpu, target: Pointer, source: Pointer):
 
 def jmp(cpu, target: Pointer):
     cpu.ip = target.read()
+
+
+def jz(cpu, target: Pointer):
+    if not cpu.register_ram.read_bit('z'):
+        return
+
+    byte_offset = target.read()
+    # Check whether offset is negative in two's complement (i.e. MSB is set)
+    if byte_offset >> 7:
+        # Compute true negative value
+        byte_offset = -(-byte_offset % 256)
+
+    cpu.ip += byte_offset
