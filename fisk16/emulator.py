@@ -57,7 +57,7 @@ class RegisterRAM(RAM):
         'r10': (10 * 2, 2),
         'r11': (11 * 2, 2),
         'r12': (12 * 2, 2),
-        'r13': (13 * 2, 2),
+        'sp': (13 * 2, 2),
         'fl': (14 * 2, 2),
         'ip': (15 * 2, 2),
         'r0l': (0, 1),
@@ -122,6 +122,14 @@ class Fisk16:
     def ip(self, value):
         self.register_ram.write('ip', value)
 
+    @property
+    def sp(self):
+        return self.register_ram.read('sp')
+
+    @sp.setter
+    def sp(self, value):
+        self.register_ram.write('sp', value)
+
     @staticmethod
     def _as_nibbles(byte):
         high = byte >> 4
@@ -134,4 +142,3 @@ class Fisk16:
         instruction, addressing_mode = instruction_set[opcode]
 
         instruction(self, *addressing_mode(self))
-

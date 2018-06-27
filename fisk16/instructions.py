@@ -101,6 +101,12 @@ def r8_imm8(cpu):
     return target_ptr, source_ptr
 
 
+def r16(cpu):
+    target_id, _ = as_nibbles(cpu.ram[cpu.ip])
+    cpu.ip += 1
+    return Pointer(cpu.register_ram, target_id * 2, 2),
+
+
 def imm16(cpu):
     immediate = cpu.ram[cpu.ip] * 256
     cpu.ip += 1
@@ -213,3 +219,22 @@ def test(cpu, target: Pointer):
     # Carry bit is set if operand is negative
     cpu.register_ram.write_bit('c', result >> (operand_size - 1))
     cpu.register_ram.write_bit('z', not result)
+
+
+def push(cpu, target: Pointer):
+    value = target.read()
+
+    cpu.ram[cpu.sp] = value & 0xff
+    cpu.sp -= 1
+    value >>= 8
+    cpu.ram[cpu.sp] = value
+    cpu.sp -= 1
+
+
+def pop(cpu, target: Pointer):
+    cpu.sp += 1
+    value = cpu.ram[cpu.sp] << 8
+    cpu.sp += 1
+    value += cpu.ram[cpu.sp]
+
+    target.write(value)
