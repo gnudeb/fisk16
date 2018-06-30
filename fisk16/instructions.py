@@ -187,10 +187,6 @@ def xch(cpu, target: Pointer, source: Pointer):
     target.write(temp)
 
 
-def jmp(cpu, target: Pointer):
-    cpu.ip = target.read()
-
-
 def jz(cpu, target: Pointer):
     if not cpu.register_ram.read_bit('z'):
         return
