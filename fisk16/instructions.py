@@ -234,3 +234,9 @@ def pop(cpu, target: Pointer):
     value += cpu.ram[cpu.sp]
 
     target.write(value)
+
+
+def call(cpu, target: Pointer):
+    push(cpu, ImmediatePointer(cpu.ip))
+    cpu.ip = target.read()
+
