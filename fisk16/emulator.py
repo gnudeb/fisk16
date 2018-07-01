@@ -1,13 +1,11 @@
 from .instruction_set import instruction_set
+from .misc import hexdump
 
 
 class RAM(bytearray):
 
     def __str__(self):
-        output = ''
-        for byte in self:
-            output += '{:02x} '.format(byte)
-        return output
+        return hexdump(self)
 
     def read(self, address, size=1):
         value = 0
