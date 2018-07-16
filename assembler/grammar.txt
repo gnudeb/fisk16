@@ -1,0 +1,13 @@
+
+program = {line}, eof;
+
+line = ({label}, command) | (identifier, "=", integer), {comment};
+
+label = identifier, ":";
+
+command = mnemonic, [" ", argument], [" ", argument];
+
+comment = ";", {printable}, "\n";
+
+mnemonic = printable, {printable}
+
