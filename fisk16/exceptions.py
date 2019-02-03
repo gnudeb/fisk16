@@ -1,0 +1,3 @@
+
+class UnprivilegedAccess(Exception):
+    pass

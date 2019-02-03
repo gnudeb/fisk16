@@ -1,0 +1,93 @@
+
+r0..r8 -- general purpose
+r9  -- fr
+r10 -- sp
+r11 -- ip
+r12 -- ds
+r13 -- ss
+r14 -- cs
+r15 -- pf
+
+ [x] mov
+ [x] or
+ [x] and
+ [x] xor
+ [x] shl
+ [x] shr
+ [x] add
+ [x] sub
+ [ ] mul
+ [ ] div
+ [x] jmp
+ [x] jz
+ [x] jeq
+ [x] call
+ [x] push
+ [x] pop
+
+RI:     ooooaaaaiiiiiiii
+RRI:    ooooaaaabbbbiiii
+RRX:    ooooaaaabbbbxxxx
+RRR:    ooooaaaabbbbcccc
+
+0000 -- movl rA, imm8
+0001 -- addi rA, imm8 (two's complement)
+0010 -- sto [rA+imm4*2], rB
+0011 -- ldo rA, [rB+imm4*2]
+0100 -- jz rA, rB: if (rB == 0) pc <- rA
+0101 -- jnz rA, rB: if (rB == 0) pc <- rA
+0110 --
+0111 --
+1000 -- add rA, rB, rC: rA <- rB + rC
+1001 -- or  rA, rB, rC: rA <- rB | rC
+1010 -- and rA, rB, rC: rA <- rB & rC
+1011 -- xor rA, rB, rC: rA <- rB ^ rC
+1100 -- sub rA, rB, rC: rA <- rB - rC
+1101 -- se rA, rB, rC: rA = (rB == rC); (zero or one)
+1110 -- sl rA, rB, rC: rA = (rB < rC); (zero or one)
+1111 -- slu rA, rB, rC: rA = (rB < rC); (zero or one) (unsigned)
+
+
+0000 -- push rA
+0001 -- pop rA
+0010 -- st [rA+imm4*2], rB
+0011 -- ld rA, [rB+imm4*2]
+0100 -- bool rA, rB, op(3), neg(1)
+        op:
+        000 -- se/sne
+        001 -- sneg/spos
+        010 -- slt/sget
+        011 -- sltu/sgetu
+        100 -- sz, snz
+0101 -- jb rA, rB, bit: if (rB.bit == 1) { pc <- rA }
+0110 -- alu rA, rB, op(4)
+        op:
+        0000 -- mov rA, rB
+        0001 -- or rA, rB
+        0010 -- and rA, rB
+        0011 -- xor rA, rB
+        0100 -- shl rA, rB
+        0101 -- shr rA, rB
+        0110 -- shra rA, rB
+0111 -- call rA, rB: [ss:sp] <- cs:pc, cs <- rA, pc <- rB
+1000 -- addi rA, imm8: rA = rA + imm8 (two's complement)
+1001 -- movi rA, imm8: low(rA) <- imm8
+
+
+80FF: addi r0, 255
+
+
+FFFF:   call CS:FF80
+
+
+1. Fetch:
+	read cs:pc
+	increment pc
+	read cs:pc
+	increment pc [set pc overflow flag]
+
+2. Execute:
+	(any writes to pc clear pc overflow flag)
+
+3. Check exceptions:
+	if pc overflow flag is set, raise PcOverflow
