@@ -12,6 +12,14 @@ class InstructionTestCase(unittest.TestCase):
     def test_reading_parts(self):
         self.assertEqual(self.instruction.opcode, 0b1011)
 
+    def test_read_bit(self):
+        self.assertEqual(self.instruction[0], 0)
+        self.assertEqual(self.instruction[1], 1)
+        self.assertEqual(self.instruction[2], 1)
+        self.assertEqual(self.instruction[3], 0)
+        self.assertEqual(self.instruction[14], 0)
+        self.assertEqual(self.instruction[15], 1)
+
 
 class WordTestCase(unittest.TestCase):
 

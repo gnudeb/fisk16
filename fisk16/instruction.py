@@ -7,6 +7,8 @@ class Instruction:
     def __getitem__(self, item):
         if isinstance(item, slice):
             return self._slice(item.start, item.stop)
+        if isinstance(item, int):
+            return self._bit(item)
 
         raise ValueError(f"Unsupported type: {type(item)}")
 
@@ -42,3 +44,6 @@ class Instruction:
         start, stop = min(start, stop), max(start, stop)
         size = stop - start + 1
         return (self.value >> start) & (0xFFFF >> (16 - size))
+
+    def _bit(self, offset):
+        return (self.value >> offset) & 1
