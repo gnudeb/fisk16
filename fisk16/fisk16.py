@@ -40,8 +40,9 @@ class Fisk16(CPU):
         throws exception, this method handles it according to Fisk16 spec.
         """
         instruction = self._fetch_instruction()
-
+        # TODO: Handle exceptions coming from `self.handle`
         self.handle(instruction)
+        # TODO: Check for PC overflow
 
     def read_register(self, register: int) -> int:
         self._ensure_access(register)

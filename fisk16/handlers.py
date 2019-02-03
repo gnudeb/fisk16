@@ -1,5 +1,6 @@
 from .cpu import CPU
 from .definitions import Opcode, Register, AluMode
+from .exceptions import MalformedInstruction
 from .instruction import Instruction
 
 
@@ -23,6 +24,8 @@ class Fisk16Handler:
             self._add_immediate(instr.register_a, instr.imm8)
         elif instr.opcode == Opcode.MOVE_IMMEDIATE:
             self._move_immediate(instr.register_a, instr.imm8)
+        else:
+            raise MalformedInstruction
 
     def _push(self, src_register):
         stack_pointer = self.cpu.read_register(Register.SP)
@@ -39,10 +42,13 @@ class Fisk16Handler:
         dest_value = self.cpu.read_register(dest_register)
         src_value = self.cpu.read_register(src_register)
 
+        # TODO: Implement all ALU modes according to spec
         if mode == AluMode.MOV:
             result = src_value
         elif mode == AluMode.OR:
             result = dest_value | src_value
+        else:
+            raise MalformedInstruction
 
         self.cpu.write_register(dest_register, result)
 
