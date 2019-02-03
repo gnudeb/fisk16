@@ -30,23 +30,6 @@ RRI:    ooooaaaabbbbiiii
 RRX:    ooooaaaabbbbxxxx
 RRR:    ooooaaaabbbbcccc
 
-0000 -- movl rA, imm8
-0001 -- addi rA, imm8 (two's complement)
-0010 -- sto [rA+imm4*2], rB
-0011 -- ldo rA, [rB+imm4*2]
-0100 -- jz rA, rB: if (rB == 0) pc <- rA
-0101 -- jnz rA, rB: if (rB == 0) pc <- rA
-0110 --
-0111 --
-1000 -- add rA, rB, rC: rA <- rB + rC
-1001 -- or  rA, rB, rC: rA <- rB | rC
-1010 -- and rA, rB, rC: rA <- rB & rC
-1011 -- xor rA, rB, rC: rA <- rB ^ rC
-1100 -- sub rA, rB, rC: rA <- rB - rC
-1101 -- se rA, rB, rC: rA = (rB == rC); (zero or one)
-1110 -- sl rA, rB, rC: rA = (rB < rC); (zero or one)
-1111 -- slu rA, rB, rC: rA = (rB < rC); (zero or one) (unsigned)
-
 
 0000 -- push rA
 0001 -- pop rA
