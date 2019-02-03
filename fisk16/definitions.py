@@ -25,6 +25,7 @@ class BoolMode(IntEnum):
 class AluMode(IntEnum):
     MOV = 0
     OR = 1
+    SWAP = 7
 
 
 class Register(IntEnum):
