@@ -45,10 +45,18 @@ class Fisk16(CPU):
         # TODO: Check for PC overflow
 
     def read_register(self, register: int) -> int:
-        self._ensure_access(register)
         return self._registers[register].value
 
     def write_register(self, register: int, value: int):
+        """
+        Write `value` to register number `register`.
+
+        If `value` is the same as the value present in register, access check
+        is not performed.
+        """
+        if self._registers[register].value == value:
+            return
+
         self._ensure_access(register)
         self._registers[register].value = value
 

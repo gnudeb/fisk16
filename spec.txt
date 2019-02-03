@@ -6,7 +6,12 @@ r11 -- ip
 r12 -- ds
 r13 -- ss
 r14 -- cs
-r15 -- pf
+r15 -- pf -- Privilege Flags
+
+Privilege flags register is a 16-bit register, each bit of which maps to each
+register of Fisk 16. When bit is cleared, writes to according register are
+permitted; otherwise, an exception is raised when write is attempted, unless
+the written value is the same as the value stored in register.
 
  [x] mov
  [x] or
