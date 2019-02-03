@@ -33,6 +33,14 @@ class Instruction:
         return self[3:0]
 
     @property
+    def short_operation(self):
+        return self[3:1]
+
+    @property
+    def negate(self):
+        return self[0]
+
+    @property
     def imm8(self):
         return self[7:0]
 

@@ -1,5 +1,5 @@
 from .cpu import CPU
-from .definitions import Opcode, Register, AluMode
+from .definitions import Opcode, Register, AluMode, BoolMode
 from .exceptions import MalformedInstruction
 from .instruction import Instruction
 
@@ -18,6 +18,10 @@ class Fisk16Handler:
             self._store(instr.register_a, instr.register_b, instr.imm4)
         elif instr.opcode == Opcode.LOAD:
             self._load(instr.register_a, instr.register_b, instr.imm4)
+        elif instr.opcode == Opcode.BOOLEAN:
+            self._boolean(
+                instr.register_a, instr.register_b,
+                instr.short_operation, instr.negate)
         elif instr.opcode == Opcode.ALU:
             self._alu(instr.register_a, instr.register_b, instr.operation)
         elif instr.opcode == Opcode.ADD_IMMEDIATE:
@@ -64,6 +68,26 @@ class Fisk16Handler:
         src_address = (src_address + offset) % 0xFFFF
         src_value = self.cpu.read_byte(src_address)
         self.cpu.write_register(dest_register, src_value)
+
+    def _boolean(self, dest_register, src_register, mode: BoolMode, negate):
+        result: bool
+
+        dest_value = self.cpu.read_register(dest_register)
+        src_value = self.cpu.read_register(src_register)
+
+        if mode == BoolMode.SET_IF_EQUAL:
+            result = dest_value == src_value
+        elif mode == BoolMode.SET_IF_NEGATIVE:
+            result = bool(src_value & 0x8000)
+        elif mode == BoolMode.SET_IF_LESS_THAN:
+            result = dest_value < src_value
+        # TODO: Implement SET_IF_LESS_UNSIGNED
+        elif mode == BoolMode.SET_IF_ZERO:
+            result = src_value == 0
+        else:
+            raise MalformedInstruction
+
+        self.cpu.write_register(dest_register, result)
 
     def _add_immediate(self, dest_register, value):
         # TODO: sign extend 8-bit `value` to 16 bits

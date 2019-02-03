@@ -14,6 +14,14 @@ class Opcode(IntEnum):
     MOVE_IMMEDIATE = 9
 
 
+class BoolMode(IntEnum):
+    SET_IF_EQUAL = 0
+    SET_IF_NEGATIVE = 1
+    SET_IF_LESS_THAN = 2
+    SET_IF_LESS_UNSIGNED = 3
+    SET_IF_ZERO = 4
+
+
 class AluMode(IntEnum):
     MOV = 0
     OR = 1
