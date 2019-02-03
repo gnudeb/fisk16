@@ -79,11 +79,6 @@ class Fisk16(CPU):
         return Instruction(value)
 
     def _ensure_access(self, register: int):
-        if not self._is_privileged(register):
-            return
-        if self._registers[31][register - 16] == 0:
+        bit_offset = register
+        if self._registers[Register.PF][bit_offset] == 1:
             raise UnprivilegedAccess
-
-    @staticmethod
-    def _is_privileged(register: int) -> bool:
-        return register >= 16

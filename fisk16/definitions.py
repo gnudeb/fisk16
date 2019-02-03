@@ -31,3 +31,4 @@ class Register(IntEnum):
     R0 = 0
     SP = 11
     PC = 12
+    PF = 15
