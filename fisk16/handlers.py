@@ -92,6 +92,9 @@ class Fisk16Handler:
         else:
             raise MalformedInstruction
 
+        if negate:
+            result = not result
+
         self.cpu.write_register(dest_register, result)
 
     def _add_immediate(self, dest_register, value):
