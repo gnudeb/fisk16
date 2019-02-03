@@ -58,6 +58,7 @@ RRR:    ooooaaaabbbbcccc
         0101 -- shr rA, rB
         0110 -- shra rA, rB
         0111 -- swap rA, rB
+        1000 -- add rA, rB
 0111 -- call rA, rB: [ss:sp] <- cs:pc, cs <- rA, pc <- rB
 1000 -- addi rA, imm8: rA = rA + imm8 (two's complement)
 1001 -- movi rA, imm8: low(rA) <- imm8

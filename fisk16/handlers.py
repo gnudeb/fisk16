@@ -54,6 +54,8 @@ class Fisk16Handler:
         elif mode == AluMode.SWAP:
             result = src_value
             self.cpu.write_register(src_register, dest_value)
+        elif mode == AluMode.ADD:
+            result = dest_value + src_value
         else:
             raise MalformedInstruction
 
