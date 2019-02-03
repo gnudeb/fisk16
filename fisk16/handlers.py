@@ -2,6 +2,7 @@ from .cpu import CPU
 from .definitions import Opcode, Register, AluMode, BoolMode
 from .exceptions import MalformedInstruction
 from .instruction import Instruction
+from .util import sign_extend
 
 
 class Fisk16Handler:
@@ -62,13 +63,16 @@ class Fisk16Handler:
         self.cpu.write_register(dest_register, result)
 
     def _store(self, dest_register, src_register, offset):
-        # TODO: sign extend 4-bit `offset` to 16 bits
+        offset = sign_extend(offset, 4, 16)
+
         dest_address = self.cpu.read_register(dest_register)
         dest_address = (dest_address + offset) % 0x10000
         src_value = self.cpu.read_register(src_register)
         self.cpu.write_byte(dest_address, src_value)
 
     def _load(self, dest_register, src_register, offset):
+        offset = sign_extend(offset, 4, 16)
+
         src_address = self.cpu.read_register(src_register)
         src_address = (src_address + offset) % 0x10000
         src_value = self.cpu.read_byte(src_address)
@@ -98,7 +102,8 @@ class Fisk16Handler:
         self.cpu.write_register(dest_register, result)
 
     def _add_immediate(self, dest_register, value):
-        # TODO: sign extend 8-bit `value` to 16 bits
+        value = sign_extend(value, 8, 16)
+
         initial_value = self.cpu.read_register(dest_register)
         self.cpu.write_register(dest_register, initial_value + value)
 
