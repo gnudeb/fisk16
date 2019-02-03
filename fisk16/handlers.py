@@ -64,13 +64,13 @@ class Fisk16Handler:
     def _store(self, dest_register, src_register, offset):
         # TODO: sign extend 4-bit `offset` to 16 bits
         dest_address = self.cpu.read_register(dest_register)
-        dest_address = (dest_address + offset) % 0xFFFF
+        dest_address = (dest_address + offset) % 0x10000
         src_value = self.cpu.read_register(src_register)
         self.cpu.write_byte(dest_address, src_value)
 
     def _load(self, dest_register, src_register, offset):
         src_address = self.cpu.read_register(src_register)
-        src_address = (src_address + offset) % 0xFFFF
+        src_address = (src_address + offset) % 0x10000
         src_value = self.cpu.read_byte(src_address)
         self.cpu.write_register(dest_register, src_value)
 
