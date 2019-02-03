@@ -1,5 +1,6 @@
 from fisk16.instruction import Instruction
 from fisk16.types import Word
+from fisk16.util import sign_extend
 
 import unittest
 
@@ -56,6 +57,20 @@ class WordTestCase(unittest.TestCase):
         self.word[0:7] = 0xA5
 
         self.assertEqual(self.word.value, 0xFFA5)
+
+
+class UtilTestCase(unittest.TestCase):
+
+    def test_sign_extend_positive(self):
+        initial = 0b1001
+        desired = 0b11111001
+
+        self.assertEqual(sign_extend(initial, 4, 8), desired)
+
+    def test_sign_extend_negative(self):
+        initial = 0b01111111
+
+        self.assertEqual(sign_extend(initial, 8, 16), initial)
 
 
 if __name__ == '__main__':
