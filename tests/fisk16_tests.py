@@ -1,8 +1,8 @@
 # TODO: Rewrite using pytest
 
-from fisk16.instruction import Instruction
-from fisk16.types import Word
-from fisk16.util import sign_extend
+from emulator.instruction import Instruction
+from emulator.types import Word
+from emulator.util import sign_extend
 
 import unittest
 
