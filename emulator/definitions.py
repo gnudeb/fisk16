@@ -31,6 +31,8 @@ class AluMode(IntEnum):
 
 class Register(IntEnum):
     R0 = 0
+    R1 = 1
+
     SP = 10
     PC = 11
     DS = 12

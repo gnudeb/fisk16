@@ -1,10 +1,61 @@
 # TODO: Rewrite using pytest
 
+from emulator.definitions import Register, Opcode, AluMode
 from emulator.instruction import Instruction
+from emulator.fisk16 import Fisk16
 from emulator.types import Word
 from emulator.util import sign_extend
 
 import unittest
+
+
+class Fisk16TestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.fisk = Fisk16()
+
+    def test_fibonacci_raw(self):
+        program = bytes([
+            0b1001_0000, 0b0000_0000,  # 00:   movi     r0, 0
+            0b1001_0001, 0b0000_0001,  # 02:   movi     r1, 1
+            0b0110_0000, 0b0001_1000,  # 04:   add      r0, r1
+            0b0110_0000, 0b0001_0111,  # 06:   swap     r0, r1
+            0b1000_1011, 0b1111_1010,  # 08:   addi     pc, -4 (jmp 04)
+        ])
+
+        for offset, byte in enumerate(program):
+            self.fisk.write_byte(0, offset, byte)
+
+        for cycle in range(19):
+            self.fisk.tick()
+
+        self.assertEqual(self.fisk.read_register(0), 8)
+        self.assertEqual(self.fisk.read_register(1), 13)
+
+    def test_fibonacci_constructed(self):
+        instructions = [
+            Instruction.from_keywords(
+                opcode=Opcode.MOVE_IMMEDIATE, register_a=Register.R0, imm8=0),
+            Instruction.from_keywords(
+                opcode=Opcode.MOVE_IMMEDIATE, register_a=Register.R1, imm8=1),
+            Instruction.from_keywords(
+                opcode=Opcode.ALU, operation=AluMode.ADD,
+                register_a=Register.R0, register_b=Register.R1),
+            Instruction.from_keywords(
+                opcode=Opcode.ALU, operation=AluMode.SWAP,
+                register_a=Register.R0, register_b=Register.R1),
+            Instruction.from_keywords(
+                opcode=Opcode.ADD_IMMEDIATE, register_a=Register.PC, imm8=-6)
+        ]
+
+        for i, instruction in enumerate(instructions):
+            self.fisk.write_word(0, i*2, instruction.value)
+
+        for cycle in range(19):
+            self.fisk.tick()
+
+        self.assertEqual(self.fisk.read_register(0), 8)
+        self.assertEqual(self.fisk.read_register(1), 13)
 
 
 class InstructionTestCase(unittest.TestCase):

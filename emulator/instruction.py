@@ -103,6 +103,9 @@ class Instruction:
 
     def _set_slice(self, value, start, stop):
         start, stop = min(start, stop), max(start, stop)
+        size = stop - start + 1
+
+        value &= bit_mask(0, size)
 
         self.value &= ~bit_mask(start, stop)
         self.value |= value << start
