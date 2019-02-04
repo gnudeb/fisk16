@@ -1,5 +1,6 @@
 from .cpu import CPU
 from .definitions import Register
+from .devices import Device, RAM
 from .exceptions import UnprivilegedAccess
 from .handlers import Fisk16Handler
 from .types import Word
@@ -16,6 +17,9 @@ class Fisk16(CPU):
         self._registers = [Word() for _ in range(32)]
         self._memory = bytearray(64)
         self._handler = handler_cls(self)
+        self._devices = {
+            0: RAM()
+        }
 
     def __getattr__(self, key):
         if key in self.register_alias:
@@ -60,29 +64,32 @@ class Fisk16(CPU):
         self._ensure_access(register)
         self._registers[register].value = value
 
-    def read_byte(self, address: int) -> int:
-        return self._memory[address]
+    def read_byte(self, segment: int, address: int) -> int:
+        # return self._memory[address]
+        return self._device_at(segment).read(address)
 
-    def write_byte(self, address: int, value: int):
-        self._memory[address] = value
+    def write_byte(self, segment: int, address: int, value: int):
+        # self._memory[address] = value
+        self._device_at(segment).write(address, value)
 
-    def read_word(self, address: int) -> int:
-        value = self.read_byte(address) << 8
-        value |= self.read_byte(address + 1)
+    def read_word(self, segment: int, address: int) -> int:
+        value = self.read_byte(segment, address) << 8
+        value |= self.read_byte(segment, address + 1)
         return value
 
-    def write_word(self, address: int, value: int):
-        self.write_byte(address, value >> 8)
-        self.write_byte(address+1, value & 0xFF)
+    def write_word(self, segment: int, address: int, value: int):
+        self.write_byte(segment, address, value >> 8)
+        self.write_byte(segment, address+1, value & 0xFF)
 
     def handle(self, instruction: Instruction):
         self._handler.handle(instruction)
 
     def _fetch_instruction(self) -> Instruction:
-        value = self._memory[self.pc] << 8
-        self.pc += 1
-        value += self._memory[self.pc]
-        self.pc += 1
+        code_segment = self.read_register(Register.CS)
+        program_counter = self.read_register(Register.PC)
+        value = self.read_word(code_segment, program_counter)
+
+        self.write_register(Register.PC, program_counter + 2)
 
         return Instruction(value)
 
@@ -90,3 +97,6 @@ class Fisk16(CPU):
         bit_offset = register
         if self._registers[Register.PF][bit_offset] == 1:
             raise UnprivilegedAccess
+
+    def _device_at(self, segment: int) -> Device:
+        return self._devices[segment]

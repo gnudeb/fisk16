@@ -33,14 +33,18 @@ class Fisk16Handler:
             raise MalformedInstruction
 
     def _push(self, src_register):
+        stack_segment = self.cpu.read_register(Register.SS)
         stack_pointer = self.cpu.read_register(Register.SP)
         src_value = self.cpu.read_register(src_register)
-        self.cpu.write_word(stack_pointer, src_value)
+
+        self.cpu.write_word(stack_segment, stack_pointer, src_value)
         self.cpu.write_register(Register.SP, stack_pointer+2)
 
     def _pop(self, dest_register):
+        stack_segment = self.cpu.read_register(Register.SS)
         stack_pointer = self.cpu.read_register(Register.Sp)
-        dest_value = self.cpu.read_word(stack_pointer)
+        dest_value = self.cpu.read_word(stack_segment, stack_pointer)
+
         self.cpu.write_register(dest_register, dest_value)
 
     def _alu(self, dest_register, src_register, mode: AluMode):
@@ -65,17 +69,21 @@ class Fisk16Handler:
     def _store(self, dest_register, src_register, offset):
         offset = sign_extend(offset, 4, 16)
 
+        data_segment = self.cpu.read_register(Register.DS)
         dest_address = self.cpu.read_register(dest_register)
         dest_address = (dest_address + offset) % 0x10000
         src_value = self.cpu.read_register(src_register)
-        self.cpu.write_byte(dest_address, src_value)
+
+        self.cpu.write_byte(data_segment, dest_address, src_value)
 
     def _load(self, dest_register, src_register, offset):
         offset = sign_extend(offset, 4, 16)
 
+        data_segment = self.cpu.read_register(Register.DS)
         src_address = self.cpu.read_register(src_register)
         src_address = (src_address + offset) % 0x10000
-        src_value = self.cpu.read_byte(src_address)
+        src_value = self.cpu.read_byte(data_segment, src_address)
+
         self.cpu.write_register(dest_register, src_value)
 
     def _boolean(self, dest_register, src_register, mode: BoolMode, negate):

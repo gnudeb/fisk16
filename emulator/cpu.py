@@ -9,14 +9,14 @@ class CPU(ABC):
     def write_register(self, register: int, value: int):
         pass
 
-    def read_byte(self, address: int) -> int:
+    def read_byte(self, segment: int, address: int) -> int:
         pass
 
-    def write_byte(self, address: int, value: int):
+    def write_byte(self, segment: int, address: int, value: int):
         pass
 
-    def read_word(self, address: int) -> int:
+    def read_word(self, segment: int, address: int) -> int:
         pass
 
-    def write_word(self, address: int, value: int):
+    def write_word(self, segment: int, address: int, value: int):
         pass
