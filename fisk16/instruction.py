@@ -22,6 +22,18 @@ class Instruction:
     0b1001
     """
 
+    fields = {
+        "opcode": slice(12, 15),
+        "register_a": slice(8, 11),
+        "register_b": slice(4, 7),
+        "register_c": slice(0, 3),
+        "operation": slice(0, 3),
+        "short_operation": slice(1, 3),
+        "negate": 0,
+        "imm8": slice(0, 7),
+        "imm4": slice(0, 3),
+    }
+
     def __init__(self, value: int):
         self.value = value
 
@@ -41,81 +53,44 @@ class Instruction:
         else:
             raise ValueError(f"Unsupported type: {type(key)}")
 
+    def __getattr__(self, key):
+        if key in self.fields:
+            return self._field(key)
+
+    def __setattr__(self, key, value):
+        if key in self.fields:
+            self._set_field(key, value)
+        else:
+            super().__setattr__(key, value)
+
     # TODO: Implement `from_dict(d: dict)`
+    @classmethod
+    def from_keywords(cls, **kw) -> 'Instruction':
+        """
+        Returns new instance of `Instruction` with fields according to `kw`.
+
+        >>> i = Instruction.from_keywords(opcode=0b1111, register_a=0b1001)
+        >>> print(i.opcode, i.register_a)
+        15 9
+        """
+        return cls.from_dict(kw)
+
+    @classmethod
+    def from_dict(cls, d: dict):
+        """
+        Returns new instance of `Instruction` with fields according to dict.
+
+        >>> i = Instruction.from_dict({"opcode": 0b1111, "register_a": 0b1001})
+        >>> print(i.opcode, i.register_a)
+        15 9
+        """
+        i = cls(0)
+        for field, value in d.items():
+            i._set_field(field, value)
+
+        return i
 
     # TODO: Possibly rewrite using dict with `slice`s to eliminate redundancy
-
-    @property
-    def opcode(self):
-        return self[15:12]
-
-    @opcode.setter
-    def opcode(self, value):
-        self[15:12] = value
-
-    @property
-    def register_a(self):
-        return self[11:8]
-
-    @register_a.setter
-    def register_a(self, value):
-        self[11:8] = value
-
-    @property
-    def register_b(self):
-        return self[7:4]
-
-    @register_b.setter
-    def register_b(self, value):
-        self[7:4] = value
-
-    @property
-    def register_c(self):
-        return self[3:0]
-
-    @register_c.setter
-    def register_c(self, value):
-        self[3:0] = value
-
-    @property
-    def operation(self):
-        return self[3:0]
-
-    @operation.setter
-    def operation(self, value):
-        self[3:0] = value
-
-    @property
-    def short_operation(self):
-        return self[3:1]
-
-    @short_operation.setter
-    def short_operation(self, value):
-        self[3:1] = value
-
-    @property
-    def negate(self):
-        return self[0]
-
-    @negate.setter
-    def negate(self, value):
-        self[0] = value
-
-    @property
-    def imm8(self):
-        return self[7:0]
-
-    @imm8.setter
-    def imm8(self, value):
-        self[7:0] = value
-
-    @property
-    def imm4(self):
-        return self[3:0]
-
-    @imm4.setter
-    def imm4(self, value):
-        self[3:0] = value
 
     def _slice(self, start, stop):
         start, stop = min(start, stop), max(start, stop)
@@ -136,3 +111,11 @@ class Instruction:
     def _set_bit(self, value, offset):
         self.value &= ~(1 << offset)
         self.value |= value << offset
+
+    def _field(self, name):
+        key = self.fields[name]
+        return self[key]
+
+    def _set_field(self, name, value):
+        key = self.fields[name]
+        self[key] = value

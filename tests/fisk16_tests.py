@@ -53,6 +53,10 @@ class InstructionTestCase(unittest.TestCase):
         self.instruction.negate = 1
         self.assertEqual(self.instruction.negate, 1)
 
+    def test_from_keywords(self):
+        i = Instruction.from_keywords(opcode=0b1111)
+        self.assertEqual(i.opcode, 0b1111)
+
 
 class WordTestCase(unittest.TestCase):
 
