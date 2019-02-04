@@ -1,3 +1,5 @@
+# TODO: Rewrite using pytest
+
 from fisk16.instruction import Instruction
 from fisk16.types import Word
 from fisk16.util import sign_extend
@@ -20,6 +22,36 @@ class InstructionTestCase(unittest.TestCase):
         self.assertEqual(self.instruction[3], 0)
         self.assertEqual(self.instruction[14], 0)
         self.assertEqual(self.instruction[15], 1)
+
+    def test_set_slice(self):
+        self.instruction[15:12] = 0b1001
+        self.assertEqual(self.instruction[15:12], 0b1001)
+
+        self.instruction[15:0] = 0
+        self.assertEqual(self.instruction.value, 0)
+
+        self.instruction[15:0] = 0xFA5F
+        self.assertEqual(self.instruction.value, 0xFA5F)
+
+    def test_set_field(self):
+        self.instruction.opcode = 0b1000
+        self.assertEqual(self.instruction.opcode, 0b1000)
+
+    def test_set_bit(self):
+        self.instruction[0] = 0
+        self.assertEqual(self.instruction[0], 0)
+        self.instruction[0] = 1
+        self.assertEqual(self.instruction[0], 1)
+        self.instruction[15] = 0
+        self.assertEqual(self.instruction[15], 0)
+        self.instruction[15] = 1
+        self.assertEqual(self.instruction[15], 1)
+
+    def test_set_named_field(self):
+        self.instruction.negate = 0
+        self.assertEqual(self.instruction.negate, 0)
+        self.instruction.negate = 1
+        self.assertEqual(self.instruction.negate, 1)
 
 
 class WordTestCase(unittest.TestCase):
