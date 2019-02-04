@@ -1,4 +1,12 @@
 
+class LexerError(Exception):
+    pass
+
+
+class UnexpectedInput(LexerError):
+    pass
+
+
 class ParsingError(Exception):
     pass
 
