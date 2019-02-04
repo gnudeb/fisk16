@@ -1,3 +1,5 @@
+from .util import bit_mask
+
 
 class Instruction:
     """
@@ -63,7 +65,6 @@ class Instruction:
         else:
             super().__setattr__(key, value)
 
-    # TODO: Implement `from_dict(d: dict)`
     @classmethod
     def from_keywords(cls, **kw) -> 'Instruction':
         """
@@ -103,9 +104,7 @@ class Instruction:
     def _set_slice(self, value, start, stop):
         start, stop = min(start, stop), max(start, stop)
 
-        # TODO: Implement `bit_mask()` function
-        mask = (0xFFFF >> (15 - stop)) & (0xFFFF << start)
-        self.value &= ~mask
+        self.value &= ~bit_mask(start, stop)
         self.value |= value << start
 
     def _set_bit(self, value, offset):
