@@ -9,10 +9,6 @@ from .instruction import Instruction
 
 class Fisk16(CPU):
 
-    register_alias = {
-        "pc": Register.PC
-    }
-
     def __init__(self, handler_cls=Fisk16Handler):
         self._registers = [Word() for _ in range(32)]
         self._memory = bytearray(64)
@@ -20,21 +16,6 @@ class Fisk16(CPU):
         self._devices = {
             0: RAM()
         }
-
-    def __getattr__(self, key):
-        if key in self.register_alias:
-            register = self.register_alias[key]
-            return self.read_register(register)
-
-        raise AttributeError(f"'{type(self)}' has no attribute '{key}'")
-
-    def __setattr__(self, key, value):
-        if key in self.register_alias:
-            register = self.register_alias[key]
-            self.write_register(register, value)
-            return
-
-        object.__setattr__(self, key, value)
 
     def tick(self):
         """
