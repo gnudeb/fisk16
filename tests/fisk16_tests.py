@@ -1,6 +1,7 @@
 # TODO: Rewrite using pytest
 
 from emulator.definitions import Register, Opcode, AluMode
+from emulator.exceptions import UnprivilegedAccess
 from emulator.instruction import Instruction
 from emulator.fisk16 import Fisk16
 from emulator.types import Word
@@ -51,6 +52,25 @@ class Fisk16TestCase(unittest.TestCase):
         # TODO: Write a better version of this test ^
         self.assertEqual(
             self.fisk.read_register(Register.PC), initial_address)
+
+    def test_unprivileged_access(self):
+        self.fisk.write_register(Register.R0, 0)
+
+        self.fisk.write_register(Register.PF, 1 << Register.R0)
+        with self.assertRaises(UnprivilegedAccess):
+            self.fisk.write_register(Register.R0, 1)
+
+        self.fisk.write_register(Register.PF, 0)
+        self.fisk.write_register(Register.R0, 2)
+
+    def test_unprivileged_access_same_value(self):
+        self.fisk.write_register(Register.R0, 0)
+
+        self.fisk.write_register(Register.PF, 1 << Register.R0)
+        self.fisk.write_register(Register.R0, 0)
+
+        self.fisk.write_register(Register.PF, 0)
+        self.fisk.write_register(Register.R0, 0)
 
     def test_fibonacci_raw(self):
         program = bytes([
