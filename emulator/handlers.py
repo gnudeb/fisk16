@@ -11,24 +11,28 @@ class Fisk16Handler:
         self.cpu = cpu
 
     def handle(self, instr: Instruction):
-        if instr.opcode == Opcode.PUSH:
+        opcode = instr.opcode
+
+        if opcode == Opcode.PUSH:
             self._push(instr.register_a)
-        elif instr.opcode == Opcode.POP:
+        elif opcode == Opcode.POP:
             self._pop(instr.register_a)
-        elif instr.opcode == Opcode.STORE:
+        elif opcode == Opcode.STORE:
             self._store(instr.register_a, instr.register_b, instr.imm4)
-        elif instr.opcode == Opcode.LOAD:
+        elif opcode == Opcode.LOAD:
             self._load(instr.register_a, instr.register_b, instr.imm4)
-        elif instr.opcode == Opcode.BOOLEAN:
+        elif opcode == Opcode.BOOLEAN:
             self._boolean(
                 instr.register_a, instr.register_b,
                 instr.short_operation, instr.negate)
-        elif instr.opcode == Opcode.ALU:
+        elif opcode == Opcode.ALU:
             self._alu(instr.register_a, instr.register_b, instr.operation)
-        elif instr.opcode == Opcode.ADD_IMMEDIATE:
+        elif opcode == Opcode.ADD_IMMEDIATE:
             self._add_immediate(instr.register_a, instr.imm8)
-        elif instr.opcode == Opcode.MOVE_IMMEDIATE:
+        elif opcode == Opcode.MOVE_IMMEDIATE:
             self._move_immediate(instr.register_a, instr.imm8)
+        elif opcode == Opcode.CALL:
+            self._call(instr.register_a, instr.register_b)
         else:
             raise MalformedInstruction
 
@@ -121,3 +125,13 @@ class Fisk16Handler:
         dest_value &= 0xFF00
         dest_value |= value
         self.cpu.write_register(dest_register, dest_value)
+
+    def _call(self, segment_register, address_register):
+        self._push(Register.PC)
+        self._push(Register.CS)
+
+        new_segment = self.cpu.read_register(segment_register)
+        new_address = self.cpu.read_register(address_register)
+
+        self.cpu.write_register(Register.CS, new_segment)
+        self.cpu.write_register(Register.PC, new_address)

@@ -25,6 +25,33 @@ class Fisk16TestCase(unittest.TestCase):
 
         self.assertEqual(self.fisk.read_register(Register.R1), register_value)
 
+    def test_call_return(self):
+        call_destination = 0x8000
+
+        initial_address = self.fisk.read_register(Register.PC)
+
+        self.fisk.write_register(Register.R0, call_destination)
+        self.fisk.handle(Instruction.from_keywords(
+            opcode=Opcode.CALL, register_a=Register.CS, register_b=Register.R0))
+
+        self.assertEqual(self.fisk.read_register(Register.PC), call_destination)
+
+        self.fisk.handle(Instruction.from_keywords(
+            opcode=Opcode.POP, register_a=Register.CS))
+        self.fisk.handle(Instruction.from_keywords(
+            opcode=Opcode.POP, register_a=Register.PC))
+
+        # Note that in reality `pc` should be equal `initial_address + 2`
+        # because fetch process would have incremented `pc` by 2 before
+        # executing `call` instruction
+        # `handle()` method assumes that it receives previously `fetch`ed
+        # instruction
+        # A better version of this test would be writing instruction values
+        # directly to memory, and then calling `fisk.tick()` three times
+        # TODO: Write a better version of this test ^
+        self.assertEqual(
+            self.fisk.read_register(Register.PC), initial_address)
+
     def test_fibonacci_raw(self):
         program = bytes([
             0b1001_0000, 0b0000_0000,  # 00:   movi     r0, 0
