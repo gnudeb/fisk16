@@ -42,10 +42,11 @@ class Fisk16Handler:
 
     def _pop(self, dest_register):
         stack_segment = self.cpu.read_register(Register.SS)
-        stack_pointer = self.cpu.read_register(Register.Sp)
-        dest_value = self.cpu.read_word(stack_segment, stack_pointer)
+        stack_pointer = self.cpu.read_register(Register.SP)
+        dest_value = self.cpu.read_word(stack_segment, stack_pointer - 2)
 
         self.cpu.write_register(dest_register, dest_value)
+        self.cpu.write_register(Register.SP, stack_pointer - 2)
 
     def _alu(self, dest_register, src_register, mode: AluMode):
         dest_value = self.cpu.read_register(dest_register)

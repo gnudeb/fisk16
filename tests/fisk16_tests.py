@@ -14,6 +14,17 @@ class Fisk16TestCase(unittest.TestCase):
     def setUp(self):
         self.fisk = Fisk16()
 
+    def test_push_pop(self):
+        register_value = 0xFA5F
+
+        self.fisk.write_register(Register.R0, register_value)
+        self.fisk.handle(Instruction.from_keywords(
+            opcode=Opcode.PUSH, register_a=Register.R0))
+        self.fisk.handle(Instruction.from_keywords(
+            opcode=Opcode.POP, register_a=Register.R1))
+
+        self.assertEqual(self.fisk.read_register(Register.R1), register_value)
+
     def test_fibonacci_raw(self):
         program = bytes([
             0b1001_0000, 0b0000_0000,  # 00:   movi     r0, 0
