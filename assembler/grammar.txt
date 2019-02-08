@@ -1,13 +1,12 @@
 
-program = {line}, eof;
+program = {line}, EOF;
 
-line = ({label}, command) | (identifier, "=", integer), {comment};
+line = [LABEL], [command], [COMMENT], NEWLINE;
 
-label = identifier, ":";
+command = mnemonic, [operand, [operand]]
 
-command = mnemonic, [" ", argument], [" ", argument];
+mnemonic = "push" | "pop" | ...
 
-comment = ";", {printable}, "\n";
+operand = register | NUMBER | IDENTIFIER
 
-mnemonic = printable, {printable}
-
+register = "r0" | "r1" | ...

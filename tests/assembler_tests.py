@@ -1,26 +1,53 @@
+import re
 import unittest
 
-from assembler.lexer import Lexer
-from assembler.rules import StringRule, RegexRule, Token
-
-# TODO: Write `Rule`s tests
+from assembler.tokens import StringToken, RegexToken
 
 
-class LexerTestCase(unittest.TestCase):
+class StringTokenTestCase(unittest.TestCase):
 
-    def setUp(self):
-        self.lexer = Lexer(
-            RegexRule("NUMBER", "[0-9]+"),
-            StringRule("SYMBOL", "+", "-"),
-        )
+    def test_single_sample(self):
 
-    def test_simple_input(self):
-        tokens = self.lexer.tokens("1+2-3")
+        class TestToken(StringToken):
+            samples = "%",
 
-        self.assertEqual(list(tokens), [
-            Token("NUMBER", "1"),
-            Token("SYMBOL", "+"),
-            Token("NUMBER", "2"),
-            Token("SYMBOL", "-"),
-            Token("NUMBER", "3"),
-        ])
+        token = TestToken.from_stream("%")
+
+        self.assertIsNotNone(token)
+        self.assertEqual(token.value, "%")
+        self.assertEqual(token.size, 1)
+
+    def test_multiple_samples(self):
+
+        class TestToken(StringToken):
+            samples = "Aa", "Bb"
+
+        token = TestToken.from_stream("AaBb")
+        self.assertIsNotNone(token)
+        token = TestToken.from_stream("BbAa")
+        self.assertIsNotNone(token)
+
+    def test_negative(self):
+
+        class TestToken(StringToken):
+            samples = "foo",
+
+        token = TestToken.from_stream("bar")
+        self.assertIsNone(token)
+
+
+class RegexTokenTestCase(unittest.TestCase):
+
+    def test_positive(self):
+
+        class TestToken(RegexToken):
+            regex = re.compile("[a-z]+")
+
+        token = TestToken.from_stream("test test")
+        self.assertIsNotNone(token)
+        self.assertEqual(token.value, "test")
+        self.assertEqual(token.size, 4)
+
+
+if __name__ == '__main__':
+    unittest.main()
