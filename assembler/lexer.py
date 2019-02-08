@@ -18,10 +18,17 @@ class Lexer:
     def __init__(self, stream: str):
         self.stream: str = stream
         self.offset = 0
+        self.line = 1
+        self.column = 1
+
+    @property
+    def current_line(self):
+        return self.stream.split("\n")[self.line - 1]
 
     def produce_tokens(self):
         while not self.is_stream_exhausted():
             next_token = self.produce_token()
+            self._update_cursor(next_token.value)
             if not next_token.ignore:
                 yield next_token
 
@@ -43,8 +50,33 @@ class Lexer:
                 token.offset = self.offset
                 self.offset += token.size
                 return token
-        # TODO: Output whole line that caused error, not just ending
-        raise UnexpectedInput(self.stream[self.offset:].split("\n", 1)[0])
+
+        self._die()
 
     def is_stream_exhausted(self):
         return self.offset >= len(self.stream)
+
+    def _update_cursor(self, new_input: str):
+        """
+        Update `line` and `column` fields based on `new_input`.
+
+        Each newline character increments `line` and resets `column` to `1`.
+        Each tab character increments `column` by 8.
+        Each other character increments `column`.
+        """
+        for char in new_input:
+            if char == "\n":
+                self.line += 1
+                self.column = 1
+            elif char == "\t":
+                self.column += 8
+            else:
+                self.column += 1
+
+    def _die(self):
+        hint = "^".rjust(self.column)
+
+        raise UnexpectedInput(
+            f"Line {self.line}\n"
+            f"{self.current_line}\n"
+            f"{hint}")
