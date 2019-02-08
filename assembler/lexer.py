@@ -3,10 +3,6 @@ from typing import Tuple, Type
 from .exceptions import UnexpectedInput
 from .tokens import Token
 
-
-# TODO: Maybe it would be a better idea not to force subclassing
-#  and instead store `tokens` and `stream` as a fields of `Lexer`'s instance
-
 # TODO: Write tests
 
 
@@ -19,34 +15,36 @@ class Lexer:
 
     tokens: Tuple[Type[Token]] = ()
 
-    @classmethod
-    def produce_tokens(cls, stream: str):
+    def __init__(self, stream: str):
+        self.stream: str = stream
+        self.offset = 0
 
-        offset = 0
-
-        while offset < len(stream):
-            next_token, offset = cls.produce_token(stream, offset)
+    def produce_tokens(self):
+        while not self.is_stream_exhausted():
+            next_token = self.produce_token()
             if not next_token.ignore:
                 yield next_token
 
         # Trying to match one more token if `tokens` contain something like
         # `EndOfFile` token that matches empty string
         try:
-            last_token, _ = cls.produce_token(stream, offset)
+            last_token = self.produce_token()
         except UnexpectedInput:
             return
 
         if last_token and not last_token.ignore:
             yield last_token
 
-    @classmethod
-    def produce_token(cls, stream: str, offset: int) -> Tuple[Token, int]:
-        for token_cls in cls.tokens:
-            effective_stream = stream[offset:]
+    def produce_token(self) -> Token:
+        for token_cls in self.tokens:
+            effective_stream = self.stream[self.offset:]
             token = token_cls.from_stream(effective_stream)
             if token is not None:
-                token.offset = offset
-                new_offset = offset + token.size
-                return token, new_offset
+                token.offset = self.offset
+                self.offset += token.size
+                return token
+        # TODO: Output whole line that caused error, not just ending
+        raise UnexpectedInput(self.stream[self.offset:].split("\n", 1)[0])
 
-        raise UnexpectedInput(stream.split("\n", 1)[0])
+    def is_stream_exhausted(self):
+        return self.offset >= len(self.stream)
