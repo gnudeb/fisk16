@@ -7,6 +7,8 @@ from .tokens import Token
 # TODO: Maybe it would be a better idea not to force subclassing
 #  and instead store `tokens` and `stream` as a fields of `Lexer`'s instance
 
+# TODO: Write tests
+
 
 class Lexer:
     """
@@ -19,16 +21,18 @@ class Lexer:
 
     @classmethod
     def produce_tokens(cls, stream: str):
-        # TODO: Implement offset tracking (as a field in `Token` instance)
-        while stream:
-            next_token, stream = cls.produce_token(stream)
+
+        offset = 0
+
+        while offset < len(stream):
+            next_token, offset = cls.produce_token(stream, offset)
             if not next_token.ignore:
                 yield next_token
 
         # Trying to match one more token if `tokens` contain something like
         # `EndOfFile` token that matches empty string
         try:
-            last_token, _ = cls.produce_token(stream)
+            last_token, _ = cls.produce_token(stream, offset)
         except UnexpectedInput:
             return
 
@@ -36,11 +40,13 @@ class Lexer:
             yield last_token
 
     @classmethod
-    def produce_token(cls, stream: str):
+    def produce_token(cls, stream: str, offset: int) -> Tuple[Token, int]:
         for token_cls in cls.tokens:
-            token = token_cls.from_stream(stream)
+            effective_stream = stream[offset:]
+            token = token_cls.from_stream(effective_stream)
             if token is not None:
-                remaining_stream = stream[token.size:]
-                return token, remaining_stream
-        # TODO: Modify the lexing algorithm to not mangle `stream`
+                token.offset = offset
+                new_offset = offset + token.size
+                return token, new_offset
+
         raise UnexpectedInput(stream.split("\n", 1)[0])

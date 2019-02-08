@@ -17,10 +17,15 @@ class Token:
 
     def __init__(self, value: str):
         self.value = value
+        self.offset = None
 
     def __repr__(self):
         class_name = self.__class__.__name__
-        return f"<{class_name} {self.sanitized_value}>"
+
+        if not self.offset:
+            return f"<{class_name} {self.sanitized_value}>"
+
+        return f"<{self.offset}:{class_name} {self.sanitized_value}>"
 
     @property
     def size(self):
