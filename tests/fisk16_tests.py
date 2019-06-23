@@ -5,7 +5,7 @@ from emulator.exceptions import UnprivilegedAccess
 from emulator.instruction import Instruction
 from emulator.fisk16 import Fisk16
 from emulator.types import Word
-from emulator.util import sign_extend
+from emulator.util import sign_extend, bit_mask
 
 import unittest
 
@@ -216,6 +216,14 @@ class UtilTestCase(unittest.TestCase):
         initial = 0b01111111
 
         self.assertEqual(sign_extend(initial, 8, 16), initial)
+
+    def test_bit_mask(self):
+        self.assertEqual(bit_mask(0, 3), 0x0F)
+        self.assertEqual(bit_mask(4, 7), 0xF0)
+        self.assertEqual(bit_mask(8, 15), 0xFF00)
+
+    def test_bit_mask_with_large_arguments(self):
+        self.assertEqual(bit_mask(99, 100), 1 << 99 | 1 << 100)
 
 
 if __name__ == '__main__':

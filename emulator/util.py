@@ -11,12 +11,6 @@ def sign_extend(value, initial_size, desired_size):
 
 
 def bit_mask(start, stop):
-    """
-    Return a number with all it's bits from `start` to `stop` set to 1.
-
-    `stop` must not exceed 31.
-    """
-    # TODO: Make this function able to receive any `stop` value
-    left = (0xFFFFFFFF >> (31 - stop))
-    right = (0xFFFFFFFF << start)
-    return left & right
+    """Return a number with all it's bits from `start` to `stop` set to 1."""
+    number_of_set_bits = stop - start + 1
+    return ((1 << number_of_set_bits) - 1) << start
